@@ -1,0 +1,66 @@
+% Flowcharting techniques for easy maintenance
+\documentclass[x11names]{article}
+\usepackage{tikz}
+\usetikzlibrary{shapes,arrows,chains}
+%%%<
+\usepackage{verbatim}
+\usepackage[active,tightpage]{preview}
+\PreviewEnvironment{tikzpicture}
+\setlength\PreviewBorder{5mm}%
+%%%>
+\begin{document}
+% =================================================
+% Set up a few colours
+\colorlet{lcfree}{Green3}
+\colorlet{lcnorm}{Blue3}
+\colorlet{lccong}{Red3}
+% -------------------------------------------------
+\pgfdeclarelayer{marx}
+\pgfsetlayers{main,marx}
+\providecommand{\cmark}[2][]{%
+  \begin{pgfonlayer}{marx}
+    \node [nmark] at (c#2#1) {#2};
+  \end{pgfonlayer}{marx}
+  } 
+\providecommand{\cmark}[2][]{\relax} 
+% -------------------------------------------------
+\begin{tikzpicture}[%
+    >=triangle 60,              % Nice arrows; your taste may be different
+    start chain=going below,    % General flow is top-to-bottom
+    node distance=6mm and 60mm, % Global setup of box spacing
+    every join/.style={norm},   % Default linetype for connecting boxes
+    ]
+% ------------------------------------------------- 
+\tikzset{
+  base/.style={draw, on chain, on grid, align=center, minimum height=4ex},
+  proc/.style={base, rectangle, text width=8em},
+  test/.style={base, diamond, aspect=2, text width=5em},
+  term/.style={proc, rounded corners},
+  coord/.style={coordinate, on chain, on grid, node distance=6mm and 25mm},
+  nmark/.style={draw, cyan, circle, font={\sffamily\bfseries}},
+  % -------------------------------------------------
+  norm/.style={->, draw, lcnorm},
+  it/.style={font={\small\itshape}}
+}
+% -------------------------------------------------
+\node [term, join]      {Pick up the Phone};
+\node [proc, join] (p1) {This is Dr.Takizawa's lab};
+\node [proc, join]      {May I ask your name?};
+\node [test, join] (t1) {Did you catch what she/he said?};
+\node [proc, join] (p3) {I will comfirm};
+\node [test, join] (t2) {Is that person in the lab now?};
+\node [proc, join] (p2) {push the retention and # button, then switch the phone to that person};
+\node [proc, right=of t2] (p4){he/she is not at his/hers desk};
+\node [proc, right=of t1] (p5){Pardon?};
+% -------------------------------------------------
+\path (t1.south) to node [near start, xshift=1em] {$y$} (p3);
+  \draw [*->,lcnorm] (t1.east) -- (p5);
+\path (t1.east) to node [near start, yshift=1em] {$n$} (p5); 
+  \draw [*->,lcnorm] (t2.east) -- (p4);
+\path (t2.east) to node [near start, yshift=1em] {$n$} (p4); 
+\path (t2.south) to node [near start, xshift=1em] {$y$} (p2);
+\draw [*->,Icnorm](p5.south)|-(p3);
+% -------------------------------------------------
+\end{tikzpicture}
+% =================================================
+\end{document}
